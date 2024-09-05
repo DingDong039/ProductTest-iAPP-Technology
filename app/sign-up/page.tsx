@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 const Signup = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword] = useState<boolean>(false);
   const [createUserWithEmailAndPassword] =
     useCreateUserWithEmailAndPassword(auth);
   const router = useRouter();
@@ -18,19 +18,15 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await createUserWithEmailAndPassword(email, password);
-      setEmail("");
-      setPassword("");
+      let res = await createUserWithEmailAndPassword(email, password);
       if (res) {
         sessionStorage.setItem("user", "true");
         toast.success("Sign-up successful!");
-        router.push("/sign-in")
-      };
+        router.push("/sign-in");
+      }
     } catch (err: any) {
       if (err instanceof FirebaseError) {
-        toast.error(err.message);
-      } else {
-        toast.error("An unknown error occurred.");
+        toast.error(err.code);
       }
     }
   };
@@ -66,6 +62,7 @@ const Signup = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="off"
               placeholder=" "
               className="peer w-full px-3 py-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 placeholder-transparent"
             />

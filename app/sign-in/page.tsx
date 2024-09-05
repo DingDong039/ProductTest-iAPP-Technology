@@ -8,12 +8,13 @@ import Link from "next/link";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-toastify";
 
+import Loading from "@/app/components/Loading";
+
 const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const expirationTime: number = new Date().getTime() + 3600 * 1000;
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,26 +28,11 @@ const Login = () => {
         setPassword("");
         toast.success("Login successful!");
         router.push("/");
-      } else {
-        toast.error("Incorrect email or password !!!");
-        setPassword("");
       }
     } catch (err: any) {
-      if (err instanceof FirebaseError) {
-        switch (err.code) {
-          case "auth/user-not-found":
-            toast.error("User not found. Please sign up first.");
-            break;
-          case "auth/wrong-password":
-            toast.error("Incorrect password. Please try again.");
-            break;
-          default:
-            toast.error(err.message);
-        }
-      }
-      else {
-        toast.error("An unknown error occurred.");
-      }
+        alert(err)
+    } finally{
+      <Loading />
     }
   };
 
@@ -82,6 +68,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder=" "
+              autoComplete="off"
               className="peer w-full px-3 py-4 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 placeholder-transparent"
             />
             <label

@@ -4,14 +4,20 @@ import { auth } from "@/app/firebase/config";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-// components
-import Loading from "./components/Loading";
+import Loading from "@/app/components/Loading";
 
 const Home = () => {
   const [user, loading] = useAuthState(auth);
-  const userSession = sessionStorage.getItem("user");
+  const [userSession, setUserSession] = useState<string | null>(null);
   const router = useRouter();
   const [isRedirecting, setIsRedirecting] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const sessionUser = sessionStorage.getItem("user");
+      setUserSession(sessionUser);
+    }
+  }, []);
 
   useEffect(() => {
     if (loading) {
