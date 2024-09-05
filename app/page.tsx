@@ -4,7 +4,8 @@ import { auth } from "@/app/firebase/config";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import Loading from "@/app/components/Loading";
+// components
+import Loading from "./components/Loading";
 
 const Home = () => {
   const [user, loading] = useAuthState(auth);
