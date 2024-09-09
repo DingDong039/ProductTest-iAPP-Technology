@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import { NextUIProvider } from "@nextui-org/react";
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 // components
@@ -22,9 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar />
-        {children}
-        <ToastContainer />
+        <NextUIProvider>
+          <Navbar />
+          {children}
+          <ToastContainer />
+        </NextUIProvider>
       </body>
     </html>
   );

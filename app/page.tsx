@@ -1,46 +1,67 @@
 "use client";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/app/firebase/config";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
-import Loading from "@/app/components/Loading";
+import { useState, useEffect } from "react";
+import { ProductType, CartItem } from "./types";
+
+import Product from "./components/Product";
+import Loading from "./components/Loading";
 
 const Home = () => {
-  const [user, loading] = useAuthState(auth);
-  const [userSession, setUserSession] = useState<string | null>(null);
-  const router = useRouter();
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const sessionUser = sessionStorage.getItem("user");
-      setUserSession(sessionUser);
-    }
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("https://fakestoreapi.com/products");
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
-  useEffect(() => {
-    if (loading) {
-      return;
+  const addToCart = (product: ProductType) => {
+    const existingItem = cart.find((item) => item.id === product.id);
+    if (existingItem) {
+      setCart(
+        cart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
+      );
+    } else {
+      setCart([...cart, { ...product, quantity: 1 }]);
     }
-    if (!user && !userSession) {
-      setIsRedirecting(true);
-      router.push("/sign-in");
-    }
-  }, [user, userSession, loading, router]);
+  };
 
-  if (loading || isRedirecting) {
+  if (loading) {
     return <Loading />;
   }
 
   return (
     <>
-      <div>
-        <h1 className="font-bold text-4xl">Welcome {user?.email}</h1>
+      <div className="container mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-6">Products</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.map((product) => (
+            <Product
+              key={product.id}
+              product={product}
+              onAddToCart={addToCart}
+            />
+          ))}
+        </div>
       </div>
     </>
-  )
-  ;
+  );
 };
 
 export default Home;

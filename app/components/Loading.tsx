@@ -1,5 +1,6 @@
 const Loading = () => {
-    return (
+  return (
+    <>
       <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
         <div className="text-center">
           <div className="loader"></div>
@@ -14,14 +15,19 @@ const Loading = () => {
             height: 50px;
             animation: spin 1s linear infinite;
           }
-  
+
           @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
           }
         `}</style>
       </div>
-    );
-  };
-  
-  export default Loading;
+    </>
+  );
+};
+
+export default Loading;
